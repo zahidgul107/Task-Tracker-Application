@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import AuthService from '../services/auth.service'
+import AuthService from '../../../../../src/services/auth.service'
 import { Link } from 'react-router-dom'
+import './index.css'
 
 const Register = (props) => {
   const [successMessage, setSuccessMessage] = useState('')

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import './Index.css'
+import './index.css'
 import {
   deleteTask,
   getAllTasks,
   getPagTasks,
   searchTask,
-} from '../services/TaskService'
-import EventBus from '../common/EventBus'
+} from '../../../services/TaskService'
+import EventBus from '../../../utils/EventBus'
 
 const ListTasks = () => {
   const [tasks, setTasks] = useState([])
@@ -167,8 +167,8 @@ const ListTasks = () => {
             )}
           </div>
           <div className="row">
-            <div className="card border-0 d-flex mb-2 ml-3 text-center p-2">
-              <strong className="font-weight-bold">
+            <div className="card border-0 d-flex mb-2 me-3 text-center p-2">
+              <strong className="fw-bold">
                 Total Tasks :{' '}
                 <span className="badge badge-success p-2 rounded-circle">
                   {totalItems}
@@ -178,7 +178,7 @@ const ListTasks = () => {
           </div>
           <div className="card table-success mb-2 form p-4 border-0 shadow-lg">
             <form>
-              <div className="form-row">
+              <div className="row">
                 <div className="form-group col-md-6">
                   <label>Status</label>{' '}
                   <select
@@ -238,7 +238,7 @@ const ListTasks = () => {
                   <td>{task.dueDate}</td>
                   <td>{task.status}</td>
                   <td>
-                    <a className="mr-2" onClick={() => updateTask(task.id)}>
+                    <a className="me-2" onClick={() => updateTask(task.id)}>
                       <i
                         className="fa fa-edit text-success"
                         data-bs-toggle="tooltip"

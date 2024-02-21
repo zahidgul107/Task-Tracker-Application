@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 //const API_URL = 'https://393d-117-214-251-77.ngrok-free.app/api/test/'
-const API_URL = 'http://localhost:3000/api/test/'
+const API_URL = 'http://localhost:9099/api/test/'
 
 const getPublicContent = () => {
   return axios.get(API_URL + 'all')
