@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import { createTask, getTask, updateTask } from '../services/TaskService'
-import EventBus from '../common/EventBus'
+import {
+  createTask,
+  getTask,
+  updateTask,
+} from '../../../../src/services/TaskService'
+import EventBus from '../../../utils/EventBus'
 
 const AddTask = () => {
   const [title, setTitle] = useState('')

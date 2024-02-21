@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import './Index.css'
-import { getCount } from '../services/DashboardService'
-import EventBus from '../common/EventBus'
+import './index.css'
+import { getCount } from '../../../services/DashboardService'
+import EventBus from '../../../utils/EventBus'
 
 const Dashboard = () => {
   const [tasksCount, setTasksCount] = useState('')
@@ -48,9 +48,7 @@ const Dashboard = () => {
               <div className="counter_no">
                 <div>
                   <p className="total_no"></p>
-                  <p className="head_couter text-warning font-weight-bold">
-                    Add Task
-                  </p>
+                  <p className="head_couter text-warning fw-bold">Add Task</p>
                 </div>
               </div>
             </div>
@@ -69,9 +67,7 @@ const Dashboard = () => {
                   <p className="total_no text-info font-weight-bold">
                     {tasksCount}
                   </p>
-                  <p className="head_couter text-warning font-weight-bold">
-                    View Tasks
-                  </p>
+                  <p className="head_couter text-warning fw-bold">View Tasks</p>
                 </div>
               </div>
             </div>

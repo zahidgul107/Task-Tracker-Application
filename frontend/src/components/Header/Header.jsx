@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import AuthService from '.../services/auth.service'
+import AuthService from '../../services/auth.service'
 
 const Header = () => {
   const navigate = useNavigate()
@@ -17,8 +17,8 @@ const Header = () => {
       <button
         className="navbar-toggler"
         type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent"
         aria-expanded="false"
         aria-label="Toggle navigation"
@@ -29,7 +29,10 @@ const Header = () => {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
           {isAuth && (
-            <NavLink className="nav-item active text-light" to="/dashboard">
+            <NavLink
+              className="nav-item active text-light text-decoration-none"
+              to="/dashboard"
+            >
               Dashboard <span className="sr-only">(current)</span>
             </NavLink>
           )}
@@ -49,8 +52,12 @@ const Header = () => {
           )}
         </ul>
         {isAuth && (
-          <span className="navbar-text">
-            <NavLink className="nav-link" to="/login" onClick={handleLogout}>
+          <span className="nav-item navbar-text ms-3">
+            <NavLink
+              className="nav-link mx-end"
+              to="/login"
+              onClick={handleLogout}
+            >
               Logout
             </NavLink>
           </span>

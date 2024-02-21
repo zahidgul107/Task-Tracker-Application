@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import './Index.css'
+import './index.css'
 
-import AuthService from '../services/auth.service'
+import AuthService from '../../../../../src/services/auth.service'
 
 const Login = () => {
   const [username, setUsername] = useState('')
