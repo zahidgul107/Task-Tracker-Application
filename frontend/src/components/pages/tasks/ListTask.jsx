@@ -53,6 +53,7 @@ const ListTasks = () => {
       .then((response) => {
         const { pagTaskList, totalPages, currentPage, totalItems } =
           response.data
+        console.log('totalItems===  ', totalItems)
         setTasks(pagTaskList)
         setTotalPages(totalPages)
         setCurrentPage(currentPage)
@@ -167,12 +168,12 @@ const ListTasks = () => {
             )}
           </div>
           <div className="row">
-            <div className="card border-0 d-flex mb-2 me-3 text-center p-2">
+            <div className="card ms-3 border-0 d-flex mb-2 text-center col-md-2 p-2">
               <strong className="fw-bold">
                 Total Tasks :{' '}
-                <span className="badge badge-success p-2 rounded-circle">
+                <strong className="badge badge-success p-2 rounded-circle fw-bold text-black">
                   {totalItems}
-                </span>
+                </strong>
               </strong>
             </div>
           </div>

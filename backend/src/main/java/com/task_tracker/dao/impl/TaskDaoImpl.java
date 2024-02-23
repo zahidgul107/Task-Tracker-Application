@@ -63,10 +63,9 @@ public class TaskDaoImpl implements TaskDao {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd ");
 		List<Predicate> predicates = new ArrayList<>();
 
-		if (search.getTitle() != null) {
-			if (!search.getTitle().isEmpty()) {
+		if (search.getTitle() != null &&  (!search.getTitle().isEmpty())) {
 				predicates.add(cb.equal(root.get("title"), search.getTitle()));
-			}
+			
 		}
 
 		if (search.getStatus() != null) {
