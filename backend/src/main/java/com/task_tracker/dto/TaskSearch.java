@@ -24,4 +24,11 @@ public class TaskSearch {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
+	@Override
+	public String toString() {
+		return "TaskSearch [title=" + title + ", dueDate=" + dueDate + ", status=" + status + "]";
+	}
+    
+    
+
 }

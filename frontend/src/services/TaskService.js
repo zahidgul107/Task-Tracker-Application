@@ -71,8 +71,6 @@ export const getPagTasks = (page = 0) => {
     },
   }
 
-  console.log('config======    ', config)
-
   return axios.get(API_URL + '/getPagTasks', config)
 }
 
