@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { createAsyncThunk } from '@reduxjs/toolkit'
 import AuthService from '../services/auth.service'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
@@ -42,7 +43,7 @@ export const searchTask = (search) => {
   return axios.post(API_URL + '/search', search, config)
 }
 
-export const getAllTasks = (page = 0) => {
+/*export const getAllTasks = (page = 0) => {
   const params = {
     page: page,
     size: 10,
@@ -56,7 +57,32 @@ export const getAllTasks = (page = 0) => {
   }
 
   return axios.get(API_URL + '/getAllTasks', config)
-}
+}  */
+
+export const getAllTasks = createAsyncThunk(
+  'tasks/getAllTasks',
+  async (page = 0, thunkAPI) => {
+    try {
+      //   const loggedInUser = thunkAPI.getState().auth.loggedInUser
+      const params = {
+        page: page,
+        size: 10,
+      }
+
+      const config = {
+        headers: {
+          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+        },
+        params: params,
+      }
+
+      const resp = await axios.get(API_URL + '/getAllTasks', config)
+      return resp.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue('something went wrong')
+    }
+  }
+)
 
 export const getPagTasks = (page = 0) => {
   const params = {

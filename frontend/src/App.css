@@ -41,3 +41,9 @@ slabel {
 body {
   background: #111 !important;
 }
+
+/* for loading page */
+.loading {
+  text-align: center;
+  margin-top: 5rem;
+}
