@@ -17,12 +17,11 @@ const ListTasks = () => {
   const [successMessage, setSuccessMessage] = useState('')
   const [failMessage, setFailMessage] = useState('')
 
-  const { tasks, isLoading } = useSelector((store) => store.tasks)
+  const { tasks, isLoading } = useSelector((store) => store.task)
   const dispatch = useDispatch()
-  console.log('tasks=====    ', tasks)
   console.log(
     'destructure====== ',
-    useSelector((store) => store.tasks)
+    useSelector((store) => store.task)
   )
 
   useEffect(() => {

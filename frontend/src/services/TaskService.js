@@ -79,7 +79,7 @@ export const getAllTasks = createAsyncThunk(
       const resp = await axios.get(API_URL + '/getAllTasks', config)
       return resp.data
     } catch (error) {
-      return thunkAPI.rejectWithValue('something went wrong')
+      return thunkAPI.rejectWithValue(error)
     }
   }
 )

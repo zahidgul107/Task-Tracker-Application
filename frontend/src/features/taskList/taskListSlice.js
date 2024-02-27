@@ -12,7 +12,7 @@ const initialState = {
 }
 
 const taskListSlice = createSlice({
-  name: 'tasks',
+  name: 'task',
   initialState,
   extraReducers: (builder) => {
     builder
@@ -24,6 +24,9 @@ const taskListSlice = createSlice({
         state.tasks = action.payload
       })
       .addCase(getAllTasks.rejected, (state, action) => {
+        console.log(action)
+        console.log(action.payload.message)
+        console.log(action.payload.response.data.message)
         state.isLoading = false
       })
   },

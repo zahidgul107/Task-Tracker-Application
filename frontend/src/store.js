@@ -4,6 +4,6 @@ import taskReducer from './features/taskList/taskListSlice'
 export const store = configureStore({
   reducer: {
     login: loginReducer,
-    tasks: taskReducer,
+    task: taskReducer,
   },
 })
