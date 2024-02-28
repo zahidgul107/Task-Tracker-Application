@@ -9,20 +9,20 @@ import {
 } from '../../../services/TaskService'
 import EventBus from '../../../utils/EventBus'
 import { useDispatch, useSelector } from 'react-redux'
+import { removeTask } from '../../../features/taskList/taskListSlice'
 
 const ListTasks = () => {
   const [dueDate, setDueDate] = useState('')
   const [status, setStatus] = useState(null)
-  const [message, setMessage] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
-  const [failMessage, setFailMessage] = useState('')
 
-  const { tasks, isLoading } = useSelector((store) => store.task)
+  const {
+    taskList,
+    isLoading,
+    unauthorizedMessage,
+    successMessage,
+    failMessage,
+  } = useSelector((store) => store.tasks)
   const dispatch = useDispatch()
-  console.log(
-    'destructure====== ',
-    useSelector((store) => store.task)
-  )
 
   useEffect(() => {
     dispatch(getAllTasks())
@@ -31,17 +31,17 @@ const ListTasks = () => {
   if (isLoading) {
     return (
       <div className="loading">
-        <h1>Loading...</h1>
+        <h1 className="text-warning">Loading...</h1>
       </div>
     )
   }
 
   const generatePageNumbers = () => {
     const maxPagesOnEachSide = 1
-    const startPage = Math.max(1, tasks.currentPage - maxPagesOnEachSide)
+    const startPage = Math.max(1, taskList.currentPage - maxPagesOnEachSide)
     const endPage = Math.min(
-      tasks.totalPages,
-      tasks.currentPage + maxPagesOnEachSide
+      taskList.totalPages,
+      taskList.currentPage + maxPagesOnEachSide
     )
 
     const pages = []
@@ -53,15 +53,15 @@ const ListTasks = () => {
 
   return (
     <>
-      {message ? (
+      {unauthorizedMessage ? (
         <div className="container text-center mt-5">
           <header className="jumbotron">
-            <h3>{message}</h3>
+            <h3 className="text-danger">{unauthorizedMessage}</h3>
           </header>
         </div>
       ) : (
         <div className="container">
-          <h2 className="text-light text-center">List of Tasks</h2>
+          <h2 className="text-light text-center">List of taskList</h2>
           <div className="row w-50 mx-auto">
             {failMessage && (
               <div
@@ -85,9 +85,9 @@ const ListTasks = () => {
           <div className="row">
             <div className="card ms-3 border-0 d-flex mb-2 text-center col-md-2 p-2">
               <strong className="fw-bold">
-                Total Tasks :{' '}
+                Total taskList :{' '}
                 <strong className="badge badge-success p-2 rounded-circle fw-bold text-black">
-                  {tasks.totalItems}
+                  {taskList.totalItems}
                 </strong>
               </strong>
             </div>
@@ -147,7 +147,7 @@ const ListTasks = () => {
               </tr>
             </thead>
             <tbody>
-              {tasks.pagTaskList?.map((task) => (
+              {taskList?.pagTaskList?.map((task) => (
                 <tr key={task.id}>
                   <td>{task.title}</td>
                   <td>{task.description}</td>
@@ -162,7 +162,14 @@ const ListTasks = () => {
                         data-bs-title="Update Bill "
                       ></i>
                     </a>
-                    <a type="button" onClick={() => removeTask(task.id)}>
+                    {/* <a
+                      type="button"
+                      onClick={() => dispatch(removeTask(task.id))}
+                    > */}
+                    <a
+                      type="button"
+                      onClick={() => dispatch(deleteTask(task.id))}
+                    >
                       <i
                         className="fa fa-trash text-danger"
                         data-bs-toggle="tooltip"
@@ -178,7 +185,7 @@ const ListTasks = () => {
           */
           {/* pagination */}
           /*{' '}
-          {tasks.totalPages > 1 && (
+          {taskList.totalPages > 1 && (
             <div className="offset-md-4 col-md-8 mb-5">
               <ul className="pagination">
                 <li className="page-item">
@@ -190,8 +197,8 @@ const ListTasks = () => {
                 <li className="page-item">
                   <button
                     className="pe-3 page-link"
-                    onClick={() => onPageChange(tasks.currentPage - 1)}
-                    disabled={tasks.currentPage <= 1}
+                    onClick={() => onPageChange(taskList.currentPage - 1)}
+                    disabled={taskList.currentPage <= 1}
                   >
                     {'<<'}
                   </button>
@@ -200,7 +207,7 @@ const ListTasks = () => {
                   <li className="page-item" key={i}>
                     <button
                       className={`page-link ${
-                        tasks.currentPage === i ? 'active' : ''
+                        taskList.currentPage === i ? 'active' : ''
                       }`}
                       onClick={() => onPageChange(i)}
                     >
@@ -212,8 +219,8 @@ const ListTasks = () => {
                 <li className="page-item">
                   <button
                     className="pe-3 page-link"
-                    onClick={() => onPageChange(tasks.currentPage + 1)}
-                    disabled={tasks.currentPage >= tasks.totalPages}
+                    onClick={() => onPageChange(taskList.currentPage + 1)}
+                    disabled={taskList.currentPage >= taskList.totalPages}
                   >
                     {'>>'}
                   </button>
@@ -222,8 +229,8 @@ const ListTasks = () => {
                 <li className="page-item">
                   <button
                     className="page-link"
-                    onClick={() => onPageChange(tasks.totalPages)}
-                    disabled={tasks.currentPage >= tasks.totalPages}
+                    onClick={() => onPageChange(taskList.totalPages)}
+                    disabled={taskList.currentPage >= taskList.totalPages}
                   >
                     Last
                   </button>

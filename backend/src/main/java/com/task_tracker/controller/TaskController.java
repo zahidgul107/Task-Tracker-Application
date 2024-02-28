@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.task_tracker.dao.TaskDao;
 import com.task_tracker.dto.TaskDTO;
 import com.task_tracker.dto.TaskSearch;
+import com.task_tracker.entity.Task;
 import com.task_tracker.entity.User;
 import com.task_tracker.exception.ResourceNotFoundException;
 import com.task_tracker.payload.response.MessageResponse;
@@ -107,10 +109,15 @@ public class TaskController {
 	}
 	
 	@PreAuthorize("hasRole('USER')")
-	@DeleteMapping("deleteTask/{id}")
+	@DeleteMapping("/deleteTask/{id}")
 	public ResponseEntity<String> deleteTodo(@PathVariable Long id) {
-		taskSer.deleteTask(id);
-		return ResponseEntity.ok("Task Deleted successfully!.");
+	    try {
+	        taskSer.deleteTask(id);
+	        return ResponseEntity.ok("Task Deleted successfully!.");
+	    } catch (ResourceNotFoundException ex) {
+	        return ResponseEntity.badRequest().body("Task not found");
+	    }
 	}
+
 
 }
