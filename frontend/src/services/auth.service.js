@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { createAsyncThunk } from '@reduxjs/toolkit'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/auth'
 const API_URL = 'http://localhost:9099/api/auth'
@@ -12,19 +13,54 @@ const register = (name, username, email, password) => {
   })
 }
 
-const login = (username, password) => {
-  return axios
-    .post(API_URL + '/login', {
-      username,
-      password,
-    })
-    .then((response) => {
-      if (response.data.username) {
-        localStorage.setItem('user', JSON.stringify(response.data))
+export const getAllTasks = createAsyncThunk(
+  'tasks/getAllTasks',
+  async (page = 0, thunkAPI) => {
+    try {
+      //   const loggedInUser = thunkAPI.getState().auth.loggedInUser
+      const params = {
+        page: page,
+        size: 10,
       }
-      return response.data
-    })
-}
+
+      const config = {
+        headers: {
+          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+        },
+        params: params,
+      }
+
+      const resp = await axios.get(API_URL + '/getAllTasks', config)
+      return resp.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)
+
+export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
+  console.log(user)
+  try {
+    const resp = await axios.post(API_URL + '/login', user)
+    return resp.data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error)
+  }
+})
+
+// const login = (username, password) => {
+//   return axios
+//     .post(API_URL + '/login', {
+//       username,
+//       password,
+//     })
+//     .then((response) => {
+//       if (response.data.username) {
+//         localStorage.setItem('user', JSON.stringify(response.data))
+//       }
+//       return response.data
+//     })
+// }
 
 const logout = () => {
   localStorage.removeItem('user')

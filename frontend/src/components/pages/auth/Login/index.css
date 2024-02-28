@@ -76,7 +76,7 @@
   box-shadow: none;
   outline: none;
 }
-.login .inputBx input[type='submit'] {
+.login .inputBx input[type='submi'] {
   width: 100%;
   background: #0078ff;
   background: linear-gradient(45deg, #ff357a, #fff172);
