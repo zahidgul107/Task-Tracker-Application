@@ -46,4 +46,5 @@ body {
 .loading {
   text-align: center;
   margin-top: 5rem;
+  color: white;
 }

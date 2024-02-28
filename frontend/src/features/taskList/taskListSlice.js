@@ -7,13 +7,23 @@ import {
 } from '../../services/TaskService'
 
 const initialState = {
-  tasks: [],
+  taskList: [],
+  unauthorizedMessage: '',
+  successMessage: '',
+  failMessage: '',
   isLoading: true,
 }
 
 const taskListSlice = createSlice({
-  name: 'task',
+  name: 'tasks',
   initialState,
+  reducers: {
+    removeTask: (state, action) => {
+      const taskId = action.payload
+      console.log('remove action======    ', action)
+      console.log(taskId, '  ========taskId')
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllTasks.pending, (state) => {
@@ -21,15 +31,30 @@ const taskListSlice = createSlice({
       })
       .addCase(getAllTasks.fulfilled, (state, action) => {
         state.isLoading = false
-        state.tasks = action.payload
+        state.taskList = action.payload
       })
       .addCase(getAllTasks.rejected, (state, action) => {
-        console.log(action)
-        console.log(action.payload.message)
-        console.log(action.payload.response.data.message)
         state.isLoading = false
+        if (action.payload.response.status === 401)
+          state.unauthorizedMessage = action.payload.response.data.message
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.successMessage = action.payload
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
+        state.isLoading = false
+        if (action.payload.response.status === 401)
+          state.unauthorizedMessage = action.payload.response.data.message
+        if (action.payload.response.status === 400)
+          state.failMessage = action.payload.response.data
       })
   },
 })
+
+export const { removeTask } = taskListSlice.actions
 
 export default taskListSlice.reducer

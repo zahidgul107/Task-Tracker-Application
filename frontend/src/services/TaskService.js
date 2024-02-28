@@ -84,6 +84,33 @@ export const getAllTasks = createAsyncThunk(
   }
 )
 
+export const deleteTask = createAsyncThunk(
+  'tasks/deleteTask',
+  async (id, thunkAPI) => {
+    try {
+      //   const loggedInUser = thunkAPI.getState().auth.loggedInUser
+
+      const config = {
+        headers: {
+          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+        },
+      }
+      // console.log('thunk api==========   ', thunkAPI)
+      // console.log('thunk state==========  ', thunkAPI.getState())
+      // console.log('thunk dispatch==========  ', thunkAPI.dispatch)
+      const dispatch = thunkAPI.dispatch
+
+      const { tasks } = thunkAPI.getState()
+      //  console.log('taskList:', tasks.taskList)
+      dispatch(getAllTasks())
+      const resp = await axios.delete(API_URL + '/deleteTask/' + id, config)
+      return resp.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)
+
 export const getPagTasks = (page = 0) => {
   const params = {
     page: page,
@@ -107,15 +134,6 @@ export const inCompleteTask = (id) => {
     },
   }
   return axios.patch(API_URL + 'user', config)
-}
-
-export const deleteTask = (id) => {
-  const config = {
-    headers: {
-      Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-    },
-  }
-  return axios.delete(API_URL + '/deleteTask/' + id, config)
 }
 
 export const completeTask = (id) => {
