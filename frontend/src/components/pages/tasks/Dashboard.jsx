@@ -3,12 +3,16 @@ import { Link } from 'react-router-dom'
 import './index.css'
 import { getCount } from '../../../services/DashboardService'
 import EventBus from '../../../utils/EventBus'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Dashboard = () => {
-  const [tasksCount, setTasksCount] = useState('')
+  const { tasksCount } = useSelector((store) => store.dashboard)
+  console.log('taskcount====', tasksCount)
+  const dispatch = useDispatch()
+  //const [tasksCount, setTasksCount] = useState('')
   const [message, setMessage] = useState('')
 
-  const dispatch = (error) => {
+  const dispatchh = (error) => {
     const message =
       (error.response && error.response.data && error.response.data.message) ||
       error.message ||
@@ -21,7 +25,8 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    dashboardCount()
+    //  dashboardCount()
+    dispatch(getCount())
   }, [])
 
   function dashboardCount() {
@@ -31,7 +36,7 @@ const Dashboard = () => {
         tasksCount ? setTasksCount(tasksCount) : setTasksCount(0)
       })
       .catch((error) => {
-        dispatch(error)
+        dispatchh(error)
       })
   }
   return (
@@ -65,7 +70,7 @@ const Dashboard = () => {
               <div className="counter_no">
                 <div>
                   <p className="total_no text-info font-weight-bold">
-                    {tasksCount}
+                    {tasksCount.tasksCount}
                   </p>
                   <p className="head_couter text-warning fw-bold">View Tasks</p>
                 </div>

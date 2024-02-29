@@ -38,7 +38,7 @@ export const getAllTasks = createAsyncThunk(
   }
 )
 
-export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
+export const loginn = createAsyncThunk('auth/login', async (user, thunkAPI) => {
   console.log(user)
   try {
     const resp = await axios.post(API_URL + '/login', user)
@@ -48,19 +48,9 @@ export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
   }
 })
 
-// const login = (username, password) => {
-//   return axios
-//     .post(API_URL + '/login', {
-//       username,
-//       password,
-//     })
-//     .then((response) => {
-//       if (response.data.username) {
-//         localStorage.setItem('user', JSON.stringify(response.data))
-//       }
-//       return response.data
-//     })
-// }
+const login = (user) => {
+  return axios.post(API_URL + '/login', user)
+}
 
 const logout = () => {
   localStorage.removeItem('user')
