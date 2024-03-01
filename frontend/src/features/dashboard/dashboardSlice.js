@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { getCount } from '../../services/DashboardService'
 
 const initialState = {
-  tasksCount: null,
+  count: null,
   unauthorizedMessage: '',
   isLoading: false,
 }
@@ -19,7 +19,7 @@ const dashboardSlice = createSlice({
       .addCase(getCount.fulfilled, (state, action) => {
         state.isLoading = false
         console.log(action.payload)
-        state.tasksCount = action.payload
+        state.count = action.payload
       })
       .addCase(getCount.rejected, (state, action) => {
         state.isLoading = false

@@ -6,8 +6,7 @@ import EventBus from '../../../utils/EventBus'
 import { useDispatch, useSelector } from 'react-redux'
 
 const Dashboard = () => {
-  const { tasksCount } = useSelector((store) => store.dashboard)
-  console.log('taskcount====', tasksCount)
+  const { count } = useSelector((store) => store.dashboard)
   const dispatch = useDispatch()
   //const [tasksCount, setTasksCount] = useState('')
   const [message, setMessage] = useState('')
@@ -29,16 +28,16 @@ const Dashboard = () => {
     dispatch(getCount())
   }, [])
 
-  function dashboardCount() {
-    getCount()
-      .then((response) => {
-        const { tasksCount } = response.data
-        tasksCount ? setTasksCount(tasksCount) : setTasksCount(0)
-      })
-      .catch((error) => {
-        dispatchh(error)
-      })
-  }
+  // function dashboardCount() {
+  //   getCount()
+  //     .then((response) => {
+  //       const { tasksCount } = response.data
+  //       tasksCount ? setTasksCount(tasksCount) : setTasksCount(0)
+  //     })
+  //     .catch((error) => {
+  //       dispatchh(error)
+  //     })
+  // }
   return (
     <div className="container mt-5">
       <div className="row column1">
@@ -70,7 +69,7 @@ const Dashboard = () => {
               <div className="counter_no">
                 <div>
                   <p className="total_no text-info font-weight-bold">
-                    {tasksCount.tasksCount}
+                    {count?.tasksCount}
                   </p>
                   <p className="head_couter text-warning fw-bold">View Tasks</p>
                 </div>
