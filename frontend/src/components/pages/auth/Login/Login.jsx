@@ -1,25 +1,16 @@
-import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './index.css'
-import { loginn } from '../../../../services/auth.service'
-
-import AuthService from '../../../../../src/services/auth.service'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   signInStart,
   signInSuccess,
   signInFailure,
 } from '../../../../features/login/userSlice'
+import { login } from '../../../../services/AuthService'
 
 const Login = () => {
   const { unauthorizedMessage, isLoading } = useSelector((store) => store.user)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-
   const dispatch = useDispatch()
-
   const navigate = useNavigate()
 
   const handleLoginForm = (e) => {
@@ -29,23 +20,17 @@ const Login = () => {
     const user = Object.fromEntries(formData)
 
     dispatch(signInStart())
-    AuthService.login(user)
+    login(user)
       .then((response) => {
         if (response.status === 200) {
-          // Check if the status is 200
-          //  console.log('Login successful:', response.data)
           dispatch(signInSuccess(response.data))
           navigate('/dashboard')
         } else {
-          //  console.error('Login failed:', response.statusText)
-          // Handle other status codes if needed
+          console.error('Login failed:', response.statusText)
         }
       })
       .catch((error) => {
-        signInFailure(error)
-        // console.error('Login error:', error)
-
-        // Handle error
+        dispatch(signInFailure(error))
       })
   }
 

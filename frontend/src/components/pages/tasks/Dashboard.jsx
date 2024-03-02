@@ -1,43 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './index.css'
 import { getCount } from '../../../services/DashboardService'
-import EventBus from '../../../utils/EventBus'
 import { useDispatch, useSelector } from 'react-redux'
 
 const Dashboard = () => {
   const { count } = useSelector((store) => store.dashboard)
   const dispatch = useDispatch()
-  //const [tasksCount, setTasksCount] = useState('')
-  const [message, setMessage] = useState('')
-
-  const dispatchh = (error) => {
-    const message =
-      (error.response && error.response.data && error.response.data.message) ||
-      error.message ||
-      error.toString()
-    setMessage(message)
-
-    if (error.response && error.response.status === 401) {
-      EventBus.dispatch('logout')
-    }
-  }
 
   useEffect(() => {
-    //  dashboardCount()
     dispatch(getCount())
   }, [])
 
-  // function dashboardCount() {
-  //   getCount()
-  //     .then((response) => {
-  //       const { tasksCount } = response.data
-  //       tasksCount ? setTasksCount(tasksCount) : setTasksCount(0)
-  //     })
-  //     .catch((error) => {
-  //       dispatchh(error)
-  //     })
-  // }
   return (
     <div className="container mt-5">
       <div className="row column1">

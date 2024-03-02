@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { loginn } from '../../services/auth.service'
 
 const initialState = {
   loggedInUser: '',
@@ -19,27 +18,20 @@ const userSlice = createSlice({
       state.loggedInUser = action.payload
     },
     signInFailure: (state, action) => {
-      state.unauthorizedMessage = action.payload
       state.isLoading = false
+      if (action?.payload?.response?.status === 401)
+        state.unauthorizedMessage = action.payload.response.data.message
+      if (action.payload.code === 'ERR_NETWORK')
+        state.unauthorizedMessage = action.payload.message
+    },
+    signOut: () => {
+      return initialState
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginn.pending, (state) => {
-        state.isLoading = true
-      })
-      .addCase(loginn.fulfilled, (state, action) => {
-        state.isLoading = false
-        state.loggedInUser = action.payload
-      })
-      .addCase(loginn.rejected, (state, action) => {
-        state.isLoading = false
-        if (action.payload.response.status === 401)
-          state.unauthorizedMessage = action.payload.response.data.message
-      })
-  },
+  extraReducers: (builder) => {},
 })
 
-export const { signInStart, signInSuccess, signInFailure } = userSlice.actions
+export const { signInStart, signInSuccess, signInFailure, signOut } =
+  userSlice.actions
 
 export default userSlice.reducer

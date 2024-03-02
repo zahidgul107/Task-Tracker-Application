@@ -5,37 +5,19 @@ import './App.css'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Header from './components/Header/Header'
 import Login from './components/pages/auth/Login/Login'
-import Dashboard from './components/pages/tasks/Dashboard'
-import ListTasks from './components/pages/tasks/ListTask'
-import AddTask from './components/pages/tasks/AddTask'
+import { AddTask, ListTasks, Dashboard } from './components/pages/tasks'
 import Register from './components/pages/auth/Register/Register'
 import Footer from './components/Footer/Footer'
-import AuthService from './services/auth.service'
-import EventBus from '../src/utils/EventBus'
+import { useSelector } from 'react-redux'
 
 function App() {
+  const { loggedInUser } = useSelector((state) => state.user)
   function AuthenticatedRoute({ children }) {
-    const isAuth = AuthService.getCurrentUser()
-
-    if (isAuth) {
+    if (loggedInUser) {
       return children
     } else {
       return <Navigate to="/" />
     }
-  }
-
-  useEffect(() => {
-    EventBus.on('logout', () => {
-      logOut()
-    })
-
-    return () => {
-      EventBus.remove('logout')
-    }
-  }, [])
-
-  const logOut = () => {
-    AuthService.logout()
   }
 
   return (
