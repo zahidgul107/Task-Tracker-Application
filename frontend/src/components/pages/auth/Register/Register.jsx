@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import AuthService from '../../../../../src/services/auth.service'
 import { Link } from 'react-router-dom'
 import './index.css'
+import { register } from '../../../../services/AuthService'
 
 const Register = (props) => {
   const [successMessage, setSuccessMessage] = useState('')
@@ -22,7 +22,7 @@ const Register = (props) => {
     }
     setLoading(true)
     console.log('name', name)
-    AuthService.register(name, username, email, password)
+    register(name, username, email, password)
       .then(
         (response) => {
           setSuccessMessage(response.data.message)

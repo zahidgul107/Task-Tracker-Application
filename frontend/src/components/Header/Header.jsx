@@ -1,13 +1,15 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import AuthService from '../../services/auth.service'
+import { useDispatch, useSelector } from 'react-redux'
+import { signOut } from '../../features/login/userSlice'
 
 const Header = () => {
+  const { loggedInUser } = useSelector((state) => state.user)
   const navigate = useNavigate()
-
-  const isAuth = AuthService.getCurrentUser()
+  const dispatch = useDispatch()
 
   function handleLogout() {
-    AuthService.logout()
+    dispatch(signOut())
+    // AuthService.logout()
     navigate('/')
   }
 
@@ -28,7 +30,7 @@ const Header = () => {
 
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
-          {isAuth && (
+          {loggedInUser && (
             <NavLink
               className="nav-item active text-light text-decoration-none"
               to="/dashboard"
@@ -36,14 +38,14 @@ const Header = () => {
               Dashboard <span className="sr-only">(current)</span>
             </NavLink>
           )}
-          {!isAuth && (
+          {!loggedInUser && (
             <li className="nav-item">
               <NavLink className="nav-link" to="/register">
                 Sign Up
               </NavLink>
             </li>
           )}
-          {!isAuth && (
+          {!loggedInUser && (
             <li className="nav-item">
               <NavLink className="nav-link" to="/login">
                 Sign In
@@ -51,7 +53,7 @@ const Header = () => {
             </li>
           )}
         </ul>
-        {isAuth && (
+        {loggedInUser && (
           <span className="nav-item navbar-text ms-3">
             <NavLink
               className="nav-link mx-end"

@@ -1,11 +1,11 @@
 import axios from 'axios'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import AuthService from '../services/auth.service'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
 const API_URL = 'http://localhost:9099/api/task'
 
-const loggedInUser = AuthService.getCurrentUser()
+//const loggedInUser = AuthService.getCurrentUser()
+const loggedInUser = 'abc'
 
 export const createTask = (task) => {
   const config = {
@@ -42,22 +42,6 @@ export const searchTask = (search) => {
   }
   return axios.post(API_URL + '/search', search, config)
 }
-
-/*export const getAllTasks = (page = 0) => {
-  const params = {
-    page: page,
-    size: 10,
-  }
-
-  const config = {
-    headers: {
-      Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-      params: params,
-    },
-  }
-
-  return axios.get(API_URL + '/getAllTasks', config)
-}  */
 
 export const getAllTasks = createAsyncThunk(
   'tasks/getAllTasks',
