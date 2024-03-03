@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-import {
-  deleteTask,
-  getAllTasks,
-  getPagTasks,
-  searchTask,
-} from '../../services/TaskService'
+import { deleteTask, getPagTasks, searchTask } from '../../services/TaskService'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
 const API_URL = 'http://localhost:9099/api/task'
@@ -29,6 +24,46 @@ export const createTask = createAsyncThunk(
     }
   }
 )
+export const updateTask = createAsyncThunk(
+  'task/updateTask',
+  async (payload, thunkAPI) => {
+    console.log('updateTask payload :>> ', payload.id)
+    const { user } = thunkAPI.getState()
+    const loggedInUser = user.loggedInUser
+    const config = {
+      headers: {
+        Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+      },
+    }
+    return axios.put(API_URL + '/updateTask/' + payload.id, payload, config)
+  }
+)
+
+export const getAllTasks = createAsyncThunk(
+  'tasks/getAllTasks',
+  async (page = 0, thunkAPI) => {
+    try {
+      const { user } = thunkAPI.getState()
+      const loggedInUser = user.loggedInUser
+      const params = {
+        page: page,
+        size: 10,
+      }
+
+      const config = {
+        headers: {
+          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+        },
+        params: params,
+      }
+
+      const resp = await axios.get(API_URL + '/getAllTasks', config)
+      return resp.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)
 
 const initialState = {
   taskList: [],
@@ -44,6 +79,10 @@ const taskListSlice = createSlice({
   reducers: {
     removeTask: (state, action) => {
       const taskId = action.payload
+    },
+    clearMessages: (state) => {
+      state.successMessage = ''
+      state.failMessage = ''
     },
   },
   extraReducers: (builder) => {
@@ -79,18 +118,18 @@ const taskListSlice = createSlice({
       })
       .addCase(createTask.fulfilled, (state, action) => {
         state.isLoading = false
-        state.successMessage = action.payload
+        state.successMessage = action.payload.message
       })
       .addCase(createTask.rejected, (state, action) => {
         state.isLoading = false
         if (action.payload.response.status === 401)
           state.unauthorizedMessage = action.payload.response.data.message
         if (action.payload.response.status === 400)
-          state.failMessage = action.payload.response.data
+          state.failMessage = action.payload.response.data.message
       })
   },
 })
 
-export const { removeTask } = taskListSlice.actions
+export const { removeTask, clearMessages } = taskListSlice.actions
 
 export default taskListSlice.reducer

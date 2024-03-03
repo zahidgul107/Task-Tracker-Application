@@ -18,7 +18,6 @@ const dashboardSlice = createSlice({
       })
       .addCase(getCount.fulfilled, (state, action) => {
         state.isLoading = false
-        console.log(action.payload)
         state.count = action.payload
       })
       .addCase(getCount.rejected, (state, action) => {

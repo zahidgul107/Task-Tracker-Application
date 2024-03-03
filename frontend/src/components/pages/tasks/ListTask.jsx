@@ -3,17 +3,20 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import './index.css'
 import {
   deleteTask,
-  getAllTasks,
   getPagTasks,
   searchTask,
 } from '../../../services/TaskService'
 import EventBus from '../../../utils/EventBus'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeTask } from '../../../features/taskList/taskListSlice'
+import {
+  getAllTasks,
+  removeTask,
+} from '../../../features/taskList/taskListSlice'
 
 const ListTasks = () => {
   const [dueDate, setDueDate] = useState('')
   const [status, setStatus] = useState(null)
+  const navigate = useNavigate()
 
   const {
     taskList,
@@ -27,6 +30,10 @@ const ListTasks = () => {
   useEffect(() => {
     dispatch(getAllTasks())
   }, [])
+
+  const updateTask = (id) => {
+    navigate(`/updateTask/${id}`)
+  }
 
   if (isLoading) {
     return (
@@ -162,10 +169,6 @@ const ListTasks = () => {
                         data-bs-title="Update Bill "
                       ></i>
                     </a>
-                    {/* <a
-                      type="button"
-                      onClick={() => dispatch(removeTask(task.id))}
-                    > */}
                     <a
                       type="button"
                       onClick={() => dispatch(deleteTask(task.id))}
