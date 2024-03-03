@@ -7,15 +7,6 @@ const API_URL = 'http://localhost:9099/api/task'
 //const loggedInUser = AuthService.getCurrentUser()
 const loggedInUser = 'abc'
 
-export const createTask = (task) => {
-  const config = {
-    headers: {
-      Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-    },
-  }
-  return axios.post(API_URL + '/add', task, config)
-}
-
 export const updateTask = (id, task) => {
   const config = {
     headers: {

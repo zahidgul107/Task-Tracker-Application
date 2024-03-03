@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { createTask } from '../../../features/taskList/taskListSlice'
 
 const AddTask = () => {
+  const dispatch = useDispatch()
   const [successMessage, setSuccessMessage] = useState('')
   const [failMessage, setFailMessage] = useState('')
   const [errors, setErrors] = useState({
@@ -10,10 +12,6 @@ const AddTask = () => {
     dueDate: '',
     status: '',
   })
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [dueDate, setDueDate] = useState('')
-  const [status, setStatus] = useState('')
 
   const saveOrUpdateTask = (e) => {
     e.preventDefault()
@@ -21,7 +19,19 @@ const AddTask = () => {
     const formData = new FormData(e.currentTarget)
     const task = Object.fromEntries(formData)
 
-    console.log('task===', task)
+    dispatch(createTask(task))
+      .then((resp) => {
+        console.log('resp===', resp)
+        if (!successMessage && !failMessage) {
+          setSuccessMessage('Task added successfully!')
+          setTimeout(() => setSuccessMessage(''), 5000)
+        } else {
+          setFailMessage('')
+        }
+      })
+      .catch((err) => {
+        setFailMessage(`Error adding the task: ${err.message}`)
+      })
   }
 
   function pageTitle() {
