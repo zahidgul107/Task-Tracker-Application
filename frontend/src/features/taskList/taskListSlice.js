@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { deleteTask, getPagTasks, searchTask } from '../../services/TaskService'
+import { signOut } from '../login/userSlice'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
 const API_URL = 'http://localhost:9099/api/task'
@@ -27,7 +28,6 @@ export const createTask = createAsyncThunk(
 export const updateTask = createAsyncThunk(
   'task/updateTask',
   async (payload, thunkAPI) => {
-    console.log('updateTask payload :>> ', payload.id)
     const { user } = thunkAPI.getState()
     const loggedInUser = user.loggedInUser
     const config = {
@@ -60,6 +60,9 @@ export const getAllTasks = createAsyncThunk(
       const resp = await axios.get(API_URL + '/getAllTasks', config)
       return resp.data
     } catch (error) {
+      if (error?.response?.status === 401) {
+        thunkAPI.dispatch(signOut())
+      }
       return thunkAPI.rejectWithValue(error)
     }
   }
@@ -67,7 +70,7 @@ export const getAllTasks = createAsyncThunk(
 
 const initialState = {
   taskList: [],
-  unauthorizedMessage: '',
+  errorMessage: '',
   successMessage: '',
   failMessage: '',
   isLoading: true,
@@ -87,7 +90,7 @@ const taskListSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllTasks.pending, (state) => {
+      .addCase(getAllTasks.pending, (state, action) => {
         state.isLoading = true
       })
       .addCase(getAllTasks.fulfilled, (state, action) => {
@@ -96,8 +99,8 @@ const taskListSlice = createSlice({
       })
       .addCase(getAllTasks.rejected, (state, action) => {
         state.isLoading = false
-        if (action.payload.response.status === 401)
-          state.unauthorizedMessage = action.payload.response.data.message
+        if (action.payload.code === 'ERR_NETWORK')
+          state.errorMessage = action.payload.message
       })
       .addCase(deleteTask.pending, (state) => {
         state.isLoading = true
