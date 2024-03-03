@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './index.css'
-import { getPagTasks, searchTask } from '../../../services/TaskService'
+import { searchTask } from '../../../services/TaskService'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   clearMessages,
   deleteTask,
   getAllTasks,
-  removeTask,
+  getPagTasks,
 } from '../../../features/taskList/taskListSlice'
 
 const ListTasks = () => {
   const [dueDate, setDueDate] = useState('')
-  const [status, setStatus] = useState(null)
+  const [status, setStatus] = useState('')
   const navigate = useNavigate()
 
   const { taskList, isLoading, errorMessage, successMessage, failMessage } =
@@ -20,7 +20,7 @@ const ListTasks = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getAllTasks())
+    dispatch(getPagTasks())
   }, [])
 
   useEffect(() => {
@@ -48,6 +48,15 @@ const ListTasks = () => {
 
   const updateTask = (id) => {
     navigate(`/updateTask/${id}`)
+  }
+
+  const handleDeleteTask = (id) => {
+    const currentPage = taskList.currentPage
+    const taskData = {
+      id,
+      currentPage,
+    }
+    dispatch(deleteTask(taskData))
   }
 
   if (isLoading) {
@@ -215,10 +224,7 @@ const ListTasks = () => {
                         data-bs-title="Update Bill "
                       ></i>
                     </a>
-                    <a
-                      type="button"
-                      onClick={() => dispatch(deleteTask(task.id))}
-                    >
+                    <a type="button" onClick={() => handleDeleteTask(task.id)}>
                       <i
                         className="fa fa-trash text-danger"
                         data-bs-toggle="tooltip"
@@ -231,14 +237,15 @@ const ListTasks = () => {
               ))}
             </tbody>
           </table>{' '}
-          */
-          {/* pagination */}
-          /*{' '}
+          {/* pagination */}{' '}
           {taskList.totalPages > 1 && (
             <div className="offset-md-4 col-md-8 mb-5">
               <ul className="pagination">
                 <li className="page-item">
-                  <button className="page-link" onClick={() => onPageChange(1)}>
+                  <button
+                    className="page-link"
+                    onClick={() => dispatch(getPagTasks(1))}
+                  >
                     First
                   </button>
                 </li>
@@ -246,7 +253,9 @@ const ListTasks = () => {
                 <li className="page-item">
                   <button
                     className="pe-3 page-link"
-                    onClick={() => onPageChange(taskList.currentPage - 1)}
+                    onClick={() =>
+                      dispatch(getPagTasks(taskList.currentPage - 1))
+                    }
                     disabled={taskList.currentPage <= 1}
                   >
                     {'<<'}
@@ -258,7 +267,7 @@ const ListTasks = () => {
                       className={`page-link ${
                         taskList.currentPage === i ? 'active' : ''
                       }`}
-                      onClick={() => onPageChange(i)}
+                      onClick={() => dispatch(getPagTasks(i))}
                     >
                       {i}
                     </button>
@@ -268,7 +277,9 @@ const ListTasks = () => {
                 <li className="page-item">
                   <button
                     className="pe-3 page-link"
-                    onClick={() => onPageChange(taskList.currentPage + 1)}
+                    onClick={() =>
+                      dispatch(getPagTasks(taskList.currentPage + 1))
+                    }
                     disabled={taskList.currentPage >= taskList.totalPages}
                   >
                     {'>>'}
@@ -278,7 +289,7 @@ const ListTasks = () => {
                 <li className="page-item">
                   <button
                     className="page-link"
-                    onClick={() => onPageChange(taskList.totalPages)}
+                    onClick={() => dispatch(getPagTasks(taskList.totalPages))}
                     disabled={taskList.currentPage >= taskList.totalPages}
                   >
                     Last
