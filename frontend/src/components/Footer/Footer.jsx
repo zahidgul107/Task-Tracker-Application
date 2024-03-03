@@ -1,6 +1,7 @@
 import React from 'react'
 import './index.css'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
