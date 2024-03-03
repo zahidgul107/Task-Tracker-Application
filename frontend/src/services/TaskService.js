@@ -25,22 +25,6 @@ export const searchTask = (search) => {
   return axios.post(API_URL + '/search', search, config)
 }
 
-export const getPagTasks = (page = 0) => {
-  const params = {
-    page: page,
-    size: 10,
-  }
-
-  const config = {
-    headers: {
-      Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-      params: params,
-    },
-  }
-
-  return axios.get(API_URL + '/getPagTasks', config)
-}
-
 export const inCompleteTask = (id) => {
   const config = {
     headers: {
