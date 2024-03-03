@@ -73,7 +73,8 @@ const AddTask = () => {
         }
 
         // Dispatch the updateTask action with the updated task
-        dispatch(updateTask(updatedTask))
+        const resp = dispatch(updateTask(updatedTask))
+        console.log('resp====   ', resp)
         navigate('/tasks')
       } else dispatch(createTask(taskData))
     }

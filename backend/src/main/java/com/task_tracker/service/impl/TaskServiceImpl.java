@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.task_tracker.dao.TaskDao;
@@ -17,7 +16,6 @@ import com.task_tracker.dto.TaskDTO;
 import com.task_tracker.dto.TaskSearch;
 import com.task_tracker.entity.Task;
 import com.task_tracker.entity.User;
-import com.task_tracker.exception.AlreadyExistException;
 import com.task_tracker.exception.ResourceNotFoundException;
 import com.task_tracker.repository.TaskRepository;
 import com.task_tracker.repository.UserRepository;
