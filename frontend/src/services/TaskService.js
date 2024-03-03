@@ -7,15 +7,6 @@ const API_URL = 'http://localhost:9099/api/task'
 //const loggedInUser = AuthService.getCurrentUser()
 const loggedInUser = 'abc'
 
-export const updateTask = (id, task) => {
-  const config = {
-    headers: {
-      Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-    },
-  }
-  return axios.put(API_URL + '/updateTask/' + id, task, config)
-}
-
 export const getTask = (id) => {
   const config = {
     headers: {
@@ -33,31 +24,6 @@ export const searchTask = (search) => {
   }
   return axios.post(API_URL + '/search', search, config)
 }
-
-export const getAllTasks = createAsyncThunk(
-  'tasks/getAllTasks',
-  async (page = 0, thunkAPI) => {
-    try {
-      //   const loggedInUser = thunkAPI.getState().auth.loggedInUser
-      const params = {
-        page: page,
-        size: 10,
-      }
-
-      const config = {
-        headers: {
-          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-        },
-        params: params,
-      }
-
-      const resp = await axios.get(API_URL + '/getAllTasks', config)
-      return resp.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error)
-    }
-  }
-)
 
 export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',

@@ -1,46 +1,92 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createTask } from '../../../features/taskList/taskListSlice'
+import {
+  clearMessages,
+  createTask,
+  updateTask,
+} from '../../../features/taskList/taskListSlice'
+import { useNavigate, useParams } from 'react-router'
 
 const AddTask = () => {
+  const { taskList, successMessage, failMessage, isLoading } = useSelector(
+    (state) => state.tasks
+  )
   const dispatch = useDispatch()
-  const [successMessage, setSuccessMessage] = useState('')
-  const [failMessage, setFailMessage] = useState('')
   const [errors, setErrors] = useState({
     title: '',
     description: '',
     dueDate: '',
     status: '',
   })
+  const [taskData, setTaskData] = useState({
+    title: '',
+    description: '',
+    dueDate: '',
+    status: '',
+  })
+  const navigate = useNavigate()
+  const { id } = useParams()
+  useEffect(() => {
+    if (id) {
+      const task = taskList.pagTaskList.find((task) => task.id === parseInt(id))
+      if (task) {
+        setTaskData(task)
+      }
+    }
+  }, [id, taskList.pagTaskList])
+
+  useEffect(() => {
+    let timer
+    if (successMessage || failMessage) {
+      timer = setTimeout(() => {
+        dispatch(clearMessages())
+      }, 3000)
+    }
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [successMessage, failMessage, dispatch])
 
   const saveOrUpdateTask = (e) => {
     e.preventDefault()
 
-    const formData = new FormData(e.currentTarget)
-    const task = Object.fromEntries(formData)
+    // Validate fields
+    const newErrors = {}
+    if (!taskData.title) {
+      newErrors.title = 'Title is required'
+    }
+    if (!taskData.description) {
+      newErrors.description = 'Description is required'
+    }
+    if (!taskData.dueDate) {
+      newErrors.dueDate = 'Due date is required'
+    }
+    if (!taskData.status) {
+      newErrors.status = 'Status is required'
+    }
+    setErrors(newErrors)
 
-    dispatch(createTask(task))
-      .then((resp) => {
-        console.log('resp===', resp)
-        if (!successMessage && !failMessage) {
-          setSuccessMessage('Task added successfully!')
-          setTimeout(() => setSuccessMessage(''), 5000)
-        } else {
-          setFailMessage('')
+    if (Object.keys(newErrors).length === 0) {
+      if (id) {
+        const updatedTask = {
+          ...taskData,
         }
-      })
-      .catch((err) => {
-        setFailMessage(`Error adding the task: ${err.message}`)
-      })
+
+        // Dispatch the updateTask action with the updated task
+        dispatch(updateTask(updatedTask))
+        navigate('/tasks')
+      } else dispatch(createTask(taskData))
+    }
   }
 
   function pageTitle() {
-    if (true) {
+    if (id) {
       return <h2 className="text-center">Update Task</h2>
     } else {
       return <h2 className="text-center">Add Task</h2>
     }
   }
+
   return (
     <>
       <div className="container">
@@ -49,7 +95,7 @@ const AddTask = () => {
           <div className="card col-md-6 offset-md-3 offset-md-3">
             {pageTitle()}
             <div className="row w-50 mx-auto">
-              {failMessage && (
+              {failMessage && typeof failMessage === 'string' && (
                 <div
                   className=" col-md-12 m-4 alert alert-icon alert-danger border-danger alert-dismissible fade show text-center "
                   role="alert"
@@ -58,7 +104,7 @@ const AddTask = () => {
                   {failMessage}
                 </div>
               )}
-              {successMessage && (
+              {successMessage && typeof successMessage === 'string' && (
                 <div
                   className=" col-md-12 m-4 alert alert-icon alert-success border-success alert-dismissible fade show text-center "
                   role="alert"
@@ -78,6 +124,10 @@ const AddTask = () => {
                       errors.title ? 'is-invalid' : ''
                     }`}
                     name="title"
+                    value={taskData.title}
+                    onChange={(e) =>
+                      setTaskData({ ...taskData, title: e.target.value })
+                    }
                   />
                   {errors.title && (
                     <div className="invalid-feedback">{errors.title}</div>
@@ -91,6 +141,10 @@ const AddTask = () => {
                       errors.description ? 'is-invalid' : ''
                     }`}
                     name="description"
+                    value={taskData.description}
+                    onChange={(e) =>
+                      setTaskData({ ...taskData, description: e.target.value })
+                    }
                   />
                   {errors.description && (
                     <div className="invalid-feedback">{errors.description}</div>
@@ -104,6 +158,10 @@ const AddTask = () => {
                       errors.dueDate ? 'is-invalid' : ''
                     }`}
                     name="dueDate"
+                    value={taskData.dueDate}
+                    onChange={(e) =>
+                      setTaskData({ ...taskData, dueDate: e.target.value })
+                    }
                   />
                   {errors.dueDate && (
                     <div className="invalid-feedback">{errors.dueDate}</div>
@@ -117,6 +175,10 @@ const AddTask = () => {
                       errors.status ? 'is-invalid' : ''
                     }`}
                     name="status"
+                    value={taskData.status}
+                    onChange={(e) =>
+                      setTaskData({ ...taskData, status: e.target.value })
+                    }
                   >
                     <option value="">Select task status</option>
                     <option value="PENDING">PENDING</option>
@@ -127,11 +189,7 @@ const AddTask = () => {
                     <div className="invalid-feedback">{errors.status}</div>
                   )}
                 </div>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  //  onClick={saveOrUpdateTask}
-                >
+                <button type="submit" className="btn btn-primary">
                   Submit
                 </button>
               </form>
