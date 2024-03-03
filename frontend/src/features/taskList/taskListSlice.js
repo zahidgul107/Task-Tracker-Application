@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { deleteTask, getPagTasks, searchTask } from '../../services/TaskService'
+import { getPagTasks, searchTask } from '../../services/TaskService'
 import { signOut } from '../login/userSlice'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
@@ -27,15 +27,28 @@ export const createTask = createAsyncThunk(
 )
 export const updateTask = createAsyncThunk(
   'task/updateTask',
+
   async (payload, thunkAPI) => {
-    const { user } = thunkAPI.getState()
-    const loggedInUser = user.loggedInUser
-    const config = {
-      headers: {
-        Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
-      },
+    try {
+      const { user } = thunkAPI.getState()
+      const loggedInUser = user.loggedInUser
+      const config = {
+        headers: {
+          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+        },
+      }
+      const resp = await axios.put(
+        API_URL + '/updateTask/' + payload.id,
+        payload,
+        config
+      )
+      return resp.data
+    } catch (error) {
+      if (error?.response?.status === 401) {
+        thunkAPI.dispatch(signOut())
+      }
+      return thunkAPI.rejectWithValue(error)
     }
-    return axios.put(API_URL + '/updateTask/' + payload.id, payload, config)
   }
 )
 
@@ -68,6 +81,35 @@ export const getAllTasks = createAsyncThunk(
   }
 )
 
+export const deleteTask = createAsyncThunk(
+  'tasks/deleteTask',
+  async (id, thunkAPI) => {
+    try {
+      const { user } = thunkAPI.getState()
+      const loggedInUser = user.loggedInUser
+
+      const config = {
+        headers: {
+          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+        },
+      }
+      const resp = await axios.delete(API_URL + '/deleteTask/' + id, config)
+      if (resp.status === 200) {
+        thunkAPI.dispatch(getAllTasks())
+      }
+      return resp.data
+    } catch (error) {
+      if (error.response?.status === 400) {
+        thunkAPI.dispatch(getAllTasks())
+      }
+      if (error?.response?.status === 401) {
+        thunkAPI.dispatch(signOut())
+      }
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)
+
 const initialState = {
   taskList: [],
   errorMessage: '',
@@ -92,9 +134,11 @@ const taskListSlice = createSlice({
     builder
       .addCase(getAllTasks.pending, (state, action) => {
         state.isLoading = true
+        state.errorMessage = ''
       })
       .addCase(getAllTasks.fulfilled, (state, action) => {
         state.isLoading = false
+        state.errorMessage = ''
         state.taskList = action.payload
       })
       .addCase(getAllTasks.rejected, (state, action) => {
@@ -104,16 +148,18 @@ const taskListSlice = createSlice({
       })
       .addCase(deleteTask.pending, (state) => {
         state.isLoading = true
+        state.errorMessage = ''
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
         state.isLoading = false
+        state.errorMessage = ''
         state.successMessage = action.payload
       })
       .addCase(deleteTask.rejected, (state, action) => {
         state.isLoading = false
-        if (action.payload.response.status === 401)
-          state.unauthorizedMessage = action.payload.response.data.message
-        if (action.payload.response.status === 400)
+        if (action?.payload?.code === 'ERR_NETWORK')
+          state.errorMessage = action.payload.message
+        if (action?.payload?.response?.status === 400)
           state.failMessage = action.payload.response.data
       })
       .addCase(createTask.pending, (state) => {
@@ -125,10 +171,26 @@ const taskListSlice = createSlice({
       })
       .addCase(createTask.rejected, (state, action) => {
         state.isLoading = false
-        if (action.payload.response.status === 401)
+        if (action?.payload?.response?.status === 401)
           state.unauthorizedMessage = action.payload.response.data.message
-        if (action.payload.response.status === 400)
+        if (action?.payload?.response?.status === 400)
           state.failMessage = action.payload.response.data.message
+      })
+      .addCase(updateTask.pending, (state) => {
+        state.isLoading = true
+        state.errorMessage = ''
+      })
+      .addCase(updateTask.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.errorMessage = ''
+        state.successMessage = action.payload.message
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.isLoading = false
+        if (action.payload.code === 'ERR_NETWORK')
+          state.errorMessage = action.payload.message
+        if (action.payload.response.status === 400)
+          state.failMessage = action.payload.response.data
       })
   },
 })

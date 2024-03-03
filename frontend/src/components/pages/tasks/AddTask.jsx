@@ -71,12 +71,17 @@ const AddTask = () => {
         const updatedTask = {
           ...taskData,
         }
-
-        // Dispatch the updateTask action with the updated task
         const resp = dispatch(updateTask(updatedTask))
-        console.log('resp====   ', resp)
         navigate('/tasks')
-      } else dispatch(createTask(taskData))
+      } else {
+        dispatch(createTask(taskData))
+      }
+      setTaskData({
+        title: '',
+        description: '',
+        dueDate: '',
+        status: '',
+      })
     }
   }
 
@@ -86,6 +91,17 @@ const AddTask = () => {
     } else {
       return <h2 className="text-center">Add Task</h2>
     }
+  }
+
+  if (isLoading) {
+    return (
+      <div id="preloader">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    )
   }
 
   return (
