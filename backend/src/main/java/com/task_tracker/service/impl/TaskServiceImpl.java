@@ -64,20 +64,22 @@ public class TaskServiceImpl implements TaskService {
 	
 	@Override
 	public Map<String, Object> getPagTasks(int page, HttpSession session, Principal principal) {
-	//	TaskSearch search= (TaskSearch) session.getAttribute("search");
-		TaskSearch search = new TaskSearch();
-//		System.err.println("search====  "+ search.toString());
-//		System.err.println(session.getId());
-//		System.err.println(session.getLastAccessedTime());
-		session.setAttribute("search", search);
+		TaskSearch sessionSearch= (TaskSearch) session.getAttribute("search");
+		Map<String, Object> response = null;
+		TaskSearch search = null;
+		if (sessionSearch != null) {
+			search = sessionSearch;
+			response = pagination(search, page, session, principal);
+		} else {
+		 search = new TaskSearch();
+		 response = pagination(search, page, session, principal);
+		}
 		Enumeration<String> attributeNames = session.getAttributeNames();
 		while (attributeNames.hasMoreElements()) {
 		    String attributeName = attributeNames.nextElement();
 		    Object attributeValue = session.getAttribute(attributeName);
 		    System.err.println(attributeName + " : " + attributeValue);
 		}
-		session.setAttribute("page", page);
-		Map<String, Object> response = pagination(search, page, session, principal);
 		return response;
 	}
 	

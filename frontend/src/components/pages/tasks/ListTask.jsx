@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import './index.css'
-import { searchTask } from '../../../services/TaskService'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   clearMessages,
   deleteTask,
   getAllTasks,
   getPagTasks,
+  searchTask,
 } from '../../../features/taskList/taskListSlice'
 
 const ListTasks = () => {
-  const [dueDate, setDueDate] = useState('')
-  const [status, setStatus] = useState('')
-  const navigate = useNavigate()
-
   const { taskList, isLoading, errorMessage, successMessage, failMessage } =
     useSelector((store) => store.tasks)
+  const [search, setSearch] = useState({
+    dueDate: '',
+    status: null,
+  })
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -57,6 +58,16 @@ const ListTasks = () => {
       currentPage,
     }
     dispatch(deleteTask(taskData))
+  }
+
+  const handleChange = (e) => {
+    setSearch({ ...search, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log(search)
+    dispatch(searchTask(search))
   }
 
   if (isLoading) {
@@ -155,19 +166,18 @@ const ListTasks = () => {
             </div>
           </div>
           <div className="card table-success mb-2 form p-4 border-0 shadow-lg">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="row">
                 <div className="form-group col-md-6">
-                  <label>Status</label>{' '}
+                  <label htmlFor="status">Status</label>
                   <select
                     className="form-select form-control"
                     aria-label="Default select example"
-                    value={status}
-                    onChange={(e) =>
-                      setStatus(e.target.value === '' ? null : e.target.value)
-                    }
+                    value={search.status}
+                    onChange={handleChange}
+                    name="status"
                   >
-                    <option value="">Select task status</option>
+                    {/* <option>Select task status</option> */}
                     <option value="PENDING">PENDING</option>
                     <option value="IN_PROGRESS">IN_PROGRESS</option>
                     <option value="COMPLETED">COMPLETED</option>
@@ -175,25 +185,23 @@ const ListTasks = () => {
                 </div>
 
                 <div className="form-group col-md-6">
-                  <label>Due Date</label>{' '}
+                  <label htmlFor="dueDate">Due Date</label>
                   <input
                     type="date"
                     className="form-control picker"
                     placeholder="Enter From Date"
-                    onChange={(e) => setDueDate(e.target.value)}
+                    value={search.dueDate}
+                    onChange={handleChange}
+                    name="dueDate"
                   />
                 </div>
               </div>
 
               <div className="row">
                 <div className="container text-center mt-3">
-                  {/* <button
-                    type="submit"
-                    className="btn btn-outline-primary"
-                    onClick={search}
-                  >
+                  <button type="submit" className="btn btn-outline-primary">
                     Search
-                  </button> */}
+                  </button>
                 </div>
               </div>
             </form>

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './index.css'
-import { getCount } from '../../../services/DashboardService'
 import { useDispatch, useSelector } from 'react-redux'
+import { getCount } from '../../../features/dashboard/dashboardSlice'
 
 const Dashboard = () => {
   const { count } = useSelector((store) => store.dashboard)

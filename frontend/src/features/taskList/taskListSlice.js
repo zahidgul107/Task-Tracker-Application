@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { searchTask } from '../../services/TaskService'
 import { signOut } from '../login/userSlice'
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
@@ -142,6 +141,31 @@ export const deleteTask = createAsyncThunk(
   }
 )
 
+export const searchTask = createAsyncThunk(
+  'tasks/search',
+  async (search, thunkAPI) => {
+    console.log(search)
+    try {
+      const { user } = thunkAPI.getState()
+      const loggedInUser = user.loggedInUser
+
+      const config = {
+        headers: {
+          Authorization: `${loggedInUser.tokenType} ${loggedInUser.accessToken}`,
+        },
+      }
+
+      const resp = await axios.post(API_URL + '/search', search, config)
+      return resp.data
+    } catch (error) {
+      if (error?.response?.status === 401) {
+        thunkAPI.dispatch(signOut())
+      }
+      return thunkAPI.rejectWithValue(error)
+    }
+  }
+)
+
 const initialState = {
   taskList: [],
   errorMessage: '',
@@ -223,6 +247,20 @@ const taskListSlice = createSlice({
           state.errorMessage = action.payload.message
         if (action.payload.response.status === 400)
           state.failMessage = action.payload.response.data
+      })
+      .addCase(searchTask.pending, (state, action) => {
+        state.isLoading = true
+        state.errorMessage = ''
+      })
+      .addCase(searchTask.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.errorMessage = ''
+        state.taskList = action.payload
+      })
+      .addCase(searchTask.rejected, (state, action) => {
+        state.isLoading = false
+        if (action.payload.code === 'ERR_NETWORK')
+          state.errorMessage = action.payload.message
       })
   },
 })
