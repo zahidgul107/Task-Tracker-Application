@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { signOut } from '../login/userSlice'
+const API_URL = `${import.meta.env.VITE_API_URL}/api/dashboard`
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
-const API_URL = 'http://localhost:9099/api/dashboard'
+//const API_URL = 'http://localhost:9099/api/dashboard'
 
 export const getCount = createAsyncThunk(
   'tasks/getCount',
@@ -25,7 +26,7 @@ export const getCount = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue(error)
     }
-  }
+  },
 )
 
 const initialState = {

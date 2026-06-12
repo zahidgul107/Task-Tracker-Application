@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 import { signOut } from '../login/userSlice'
+const API_URL = `${import.meta.env.VITE_API_URL}/api/task`
 
 //const API_URL = 'https://2e08-203-129-216-146.ngrok-free.app/api/task'
-const API_URL = 'http://localhost:9099/api/task'
+//const API_URL = 'http://localhost:9099/api/task'
 
 export const createTask = createAsyncThunk(
   'task/createTask',
@@ -22,7 +23,7 @@ export const createTask = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error)
     }
-  }
+  },
 )
 
 export const updateTask = createAsyncThunk(
@@ -39,7 +40,7 @@ export const updateTask = createAsyncThunk(
       const resp = await axios.put(
         API_URL + '/updateTask/' + payload.id,
         payload,
-        config
+        config,
       )
       return resp.data
     } catch (error) {
@@ -48,7 +49,7 @@ export const updateTask = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue(error)
     }
-  }
+  },
 )
 
 export const getAllTasks = createAsyncThunk(
@@ -77,7 +78,7 @@ export const getAllTasks = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue(error)
     }
-  }
+  },
 )
 
 export const getPagTasks = createAsyncThunk(
@@ -106,7 +107,7 @@ export const getPagTasks = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue(error)
     }
-  }
+  },
 )
 
 export const deleteTask = createAsyncThunk(
@@ -123,7 +124,7 @@ export const deleteTask = createAsyncThunk(
       }
       const resp = await axios.delete(
         API_URL + '/deleteTask/' + payload.id,
-        config
+        config,
       )
       if (resp.status === 200) {
         thunkAPI.dispatch(getPagTasks(payload.currentPage))
@@ -138,7 +139,7 @@ export const deleteTask = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue(error)
     }
-  }
+  },
 )
 
 export const searchTask = createAsyncThunk(
@@ -163,7 +164,7 @@ export const searchTask = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue(error)
     }
-  }
+  },
 )
 
 const initialState = {
