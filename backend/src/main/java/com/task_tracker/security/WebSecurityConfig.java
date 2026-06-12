@@ -20,6 +20,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.task_tracker.security.jwt.AuthEntryPointJwt;
 import com.task_tracker.security.jwt.AuthTokenFilter;
 import com.task_tracker.service.impl.UserDetailsServiceImpl;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -81,19 +85,35 @@ public class WebSecurityConfig {
 	//
 //	    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	// }
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration configuration = new CorsConfiguration();
+	    configuration.setAllowedOrigins(List.of(
+	        "http://localhost:5173",
+	        "https://eloquent-truffle-083df6.netlify.app"
+	    ));
+	    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	    configuration.setAllowedHeaders(List.of("*"));
+	    configuration.setAllowCredentials(true);
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", configuration);
+	    return source;
+	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable())
-				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/api/test/**").permitAll().anyRequest().authenticated());
+	    http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+	        .csrf(csrf -> csrf.disable())
+	        .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/api/auth/**").permitAll()
+	            .requestMatchers("/api/test/**").permitAll()
+	            .anyRequest().authenticated());
 
-		http.authenticationProvider(authenticationProvider());
+	    http.authenticationProvider(authenticationProvider());
+	    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
-		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
-		return http.build();
+	    return http.build();
 	}
 }
