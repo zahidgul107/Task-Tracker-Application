@@ -133,9 +133,7 @@ public class TaskServiceImpl implements TaskService {
 	private Map<String, Object> pagination(TaskSearch search, int page, HttpSession session, Principal principal) {
 
 		User user = userRepo.findByUsername(principal.getName()).get();
-		
-		Pageable pageable = PageRequest.of(page - 1, 10);
-		
+				
 		List<Task> taskList = taskDao.search(search, user);
 		List<TaskDTO> taskDtoList = taskList.stream().map((task) -> modelMapper.map(task, TaskDTO.class)).collect(Collectors.toList());
 		
